@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RAKSHA_NETWORK.exe</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  width:100%;
+  min-height:100%;
+  background:#020606;
+  color:#d8fff1;
+  font-family:"Courier New",monospace;
+  overflow-x:hidden;
+}
+
+body{
+  min-height:100vh;
+  position:relative;
+}
+
+#matrix{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  opacity:.22;
+}
+
+.mouse-glow{
+  position:fixed;
+  width:350px;
+  height:350px;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:1;
+  background:radial-gradient(
+    circle,
+    rgba(0,255,170,.18),
+    transparent 70%
+  );
+  transform:translate(-50%,-50%);
+}
+
+.scanlines{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  pointer-events:none;
+  opacity:.08;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    #00ff9d 4px
+  );
+}
+
+/* ENTER SCREEN */
+
+#enterScreen{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:
+    radial-gradient(circle,#04251c,#000);
+  transition:1s;
+}
+
+.enter-box{
+  width:min(700px,90%);
+  padding:45px 25px;
+  border:1px solid #00ff9d;
+  background:rgba(0,20,15,.8);
+  box-shadow:
+    0 0 20px #00ff9d33,
+    inset 0 0 40px #00ff9d0c;
+}
+
+.enter-box h1{
+  color:#00ff9d;
+  font-size:clamp(25px,6vw,55px);
+  text-shadow:0 0 20px #00ff9d;
+  margin-bottom:15px;
+}
+
+.enter-box p{
+  color:#83cdb3;
+  margin-bottom:30px;
+}
+
+.enter-btn{
+  padding:17px 28px;
+  color:#001b10;
+  background:#00ff9d;
+  border:0;
+  font-family:inherit;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 0 25px #00ff9d88;
+  transition:.2s;
+}
+
+.enter-btn:hover{
+  transform:scale(1.06);
+  box-shadow:0 0 45px #00ff9d;
+}
+
+#main{
+  position:relative;
+  z-index:3;
+  width:min(900px,92%);
+  margin:auto;
+  padding:70px 0;
+  display:none;
+}
+
+/* TERMINAL */
+
+.terminal{
+  background:rgba(0,10,8,.9);
+  border:1px solid #00ff9d66;
+  box-shadow:
+    0 0 60px #00ff9d15,
+    inset 0 0 40px #00ff9d08;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.terminal-head{
+  height:38px;
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  gap:7px;
+  background:#06130f;
+  border-bottom:1px solid #00ff9d22;
+}
+
+.dot{
+  width:11px;
+  height:11px;
+  border-radius:50%;
+}
+
+.r{background:#ff4b55}
+.y{background:#ffc84b}
+.g{background:#00ff88}
+
+.terminal-body{
+  padding:25px;
+  min-height:280px;
+  font-size:14px;
+  line-height:1.8;
+  color:#6affbb;
+  text-shadow:0 0 7px #00ff9d;
+}
+
+.cursor{
+  display:inline-block;
+  width:8px;
+  height:16px;
+  background:#00ff9d;
+  animation:blink .6s infinite;
+}
+
+@keyframes blink{
+  50%{opacity:0}
+}
+
+/* GLITCH */
+
+.glitch{
+  animation:glitch .35s steps(2);
+}
+
+@keyframes glitch{
+  0%{transform:translate(0)}
+  20%{transform:translate(-8px,3px)}
+  40%{transform:translate(8px,-3px)}
+  60%{transform:translate(-4px,-2px)}
+  80%{transform:translate(4px,2px)}
+  100%{transform:translate(0)}
+}
+
+/* HERO */
+
+.hero{
+  display:none;
+  text-align:center;
+  padding-top:70px;
+  animation:heroIn 1.4s ease;
+}
+
+@keyframes heroIn{
+  from{
+    opacity:0;
+    transform:scale(.8);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+.status{
+  display:inline-block;
+  border:1px solid #ff4fc4;
+  color:#ff91df;
+  padding:8px 16px;
+  border-radius:30px;
+  font-size:11px;
+  letter-spacing:3px;
+  margin-bottom:25px;
+  box-shadow:0 0 20px #ff36bc33;
+}
+
+.hero h1{
+  font-family:Arial,sans-serif;
+  font-size:clamp(45px,10vw,100px);
+  line-height:.9;
+  background:linear-gradient(
+    90deg,
+    #fff,
+    #ff7bd7,
+    #fff,
+    #ff42bf
+  );
+  background-size:300%;
+  -webkit-background-clip:text;
+  color:transparent;
+  animation:shine 4s linear infinite;
+}
+
+@keyframes shine{
+  to{background-position:300%}
+}
+
+.subtitle{
+  margin:25px auto;
+  max-width:650px;
+  color:#cfaecc;
+  font-family:Arial,sans-serif;
+  font-size:18px;
+  line-height:1.7;
+}
+
+/* RAKHI */
+
+.rakhi{
+  width:210px;
+  height:210px;
+  margin:65px auto;
+  position:relative;
+  animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+  50%{
+    transform:translateY(-18px) rotate(2deg);
+  }
+}
+
+.rakhi:before,
+.rakhi:after{
+  content:"";
+  position:absolute;
+  top:50%;
+  height:30px;
+  width:120px;
+  transform:translateY(-50%);
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #ff279e,
+      #ffd2f4,
+      #ff279e
+    );
+  box-shadow:0 0 20px #ff29a9;
+}
+
+.rakhi:before{
+  right:62%;
+}
+
+.rakhi:after{
+  left:62%;
+}
+
+.rakhi-core{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:120px;
+  height:120px;
+  transform:translate(-50%,-50%) rotate(45deg);
+  border:5px solid #ffd8f6;
+  background:
+    radial-gradient(
+      circle,
+      #fff 0 8%,
+      #ffd4f4 9% 17%,
+      #ff35b0 18% 50%,
+      #7b159d 51% 100%
+    );
+  box-shadow:
+    0 0 25px #ff42bc,
+    0 0 80px #ff42bc88;
+}
+
+.rakhi-core:after{
+  content:"";
+  position:absolute;
+  inset:17px;
+  border:3px dotted white;
+  border-radius:50%;
+}
+
+/* MESSAGE */
+
+.message{
+  margin:auto;
+  max-width:750px;
+  padding:40px 28px;
+  border:1px solid #ffffff18;
+  background:rgba(255,255,255,.045);
+  border-radius:25px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 20px 80px #0008;
+  font-family:Arial,sans-serif;
+}
+
+.message h2{
+  color:#fface7;
+  margin-bottom:20px;
+}
+
+.message p{
+  color:#e6d5e5;
+  line-height:1.9;
+  font-size:17px;
+}
+
+.btn{
+  margin-top:30px;
+  padding:17px 30px;
+  border:0;
+  border-radius:50px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  background:linear-gradient(
+    90deg,
+    #ff158d,
+    #a532ff
+  );
+  box-shadow:0 0 30px #ff238d55;
+  transition:.2s;
+}
+
+.btn:hover{
+  transform:translateY(-4px) scale(1.05);
+}
+
+/* FINAL */
+
+.final{
+  margin-top:90px;
+  display:none;
+  animation:finalIn 2s ease;
+}
+
+.final.show{
+  display:block;
+}
+
+@keyframes finalIn{
+  from{
+    opacity:0;
+    transform:scale(.4);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+.heart{
+  font-size:100px;
+  animation:heartbeat 1s infinite;
+}
+
+@keyframes heartbeat{
+  50%{transform:scale(1.2)}
+}
+
+.final h2{
+  font-family:Arial,sans-serif;
+  font-size:clamp(35px,7vw,70px);
+  margin:20px 0;
+}
+
+.signature{
+  color:#ff8bdc;
+  font-size:25px;
+  font-style:italic;
+}
+
+/* SECRET */
+
+.secret{
+  color:#00291d;
+  user-select:none;
+  font-size:2px;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="mouse-glow" id="glow"></div>
+
+<div class="scanlines"></div>
+
+
+<!-- ENTER -->
+
+<div id="enterScreen">
+
+  <div class="enter-box">
+
+    <h1>RAKSHA_NETWORK.exe</h1>
+
+    <p>
+      ⚠ CLASSIFIED CLASSROOM TRANSMISSION ⚠
+      <br><br>
+      An unauthorized message has been detected.
+      <br>
+      Authentication required.
+    </p>
+
+    <button class="enter-btn" onclick="ENTER()">
+      &gt; ENTER THE NETWORK
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- MAIN -->
+
+<div id="main">
+
+  <div class="terminal" id="terminal">
+
+    <div class="terminal-head">
+      <div class="dot r"></div>
+      <div class="dot y"></div>
+      <div class="dot g"></div>
+    </div>
+
+    <div class="terminal-body">
+
+      <div id="terminalText"></div>
+      <span class="cursor"></span>
+
+    </div>
+
+  </div>
+
+
+  <section class="hero" id="hero">
+
+    <div class="status">
+      TRANSMISSION SUCCESSFUL • 2026
+    </div>
+
+    <h1>
+      HAPPY<br>
+      RAKSHA<br>
+      BANDHAN 🪢
+    </h1>
+
+    <p class="subtitle">
+      A highly classified message for the
+      most chaotic, legendary and unforgettable
+      classmates.
+    </p>
+
+
+    <div class="rakhi">
+      <div class="rakhi-core"></div>
+    </div>
+
+
+    <div class="message">
+
+      <h2>Dear Classmates ❤️</h2>
+
+      <p>
+
+        Today isn't just about a thread.
+        It's about the people who somehow turn
+        normal classroom days into memories.
+        😂
+        <br><br>
+
+        We've survived assignments,
+        exams, deadlines, attendance,
+        group projects and approximately
+        <strong>7,000 "bro send the notes"</strong>
+        messages.
+        😭
+        <br><br>
+
+        So here's a completely unnecessary,
+        ridiculously over-engineered,
+        technologically questionable
+        digital Rakhi.
+        🪢
+        <br><br>
+
+        May our friendship survive every exam,
+        every deadline and every
+        <strong>"sir tomorrow pakka submit kar denge"</strong>.
+        😂❤️
+
+      </p>
+
+      <button class="btn" onclick="CELEBRATE()">
+        🪢 ACCEPT DIGITAL RAKHI
+      </button>
+
+    </div>
+
+
+    <div class="final" id="final">
+
+      <div class="heart">❤️</div>
+
+      <h2>
+        FRIENDSHIP.EXE<br>
+        WILL NEVER BE DELETED.
+      </h2>
+
+      <div class="signature">
+        — From Vaz ❤️
+      </div>
+
+      <div class="secret">
+        you found the secret. vaz owes you a samosa.
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   MATRIX
+===================================================== */
+
+const matrix=document.getElementById("matrix");
+const ctx=matrix.getContext("2d");
+
+function resize(){
+  matrix.width=innerWidth;
+  matrix.height=innerHeight;
+}
+
+resize();
+
+window.addEventListener("resize",resize);
+
+const chars=
+"01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@{}[]<>/";
+
+const font=14;
+
+let drops=[];
+
+function setupDrops(){
+
+  drops=[];
+
+  const columns=
+    Math.floor(matrix.width/font);
+
+  for(let i=0;i<columns;i++){
+    drops[i]=
+      Math.random()*-100;
+  }
+}
+
+setupDrops();
+
+function drawMatrix(){
+
+  ctx.fillStyle="rgba(0,0,0,.08)";
+  ctx.fillRect(
+    0,0,
+    matrix.width,
+    matrix.height
+  );
+
+  ctx.font=font+"px monospace";
+
+  for(let i=0;i<drops.length;i++){
+
+    const text=
+      chars[Math.floor(Math.random()*chars.length)];
+
+    ctx.fillStyle=
+      Math.random()>.9
+      ?"#ffffff"
+      :"#00ff9d";
+
+    ctx.fillText(
+      text,
+      i*font,
+      drops[i]*font
+    );
+
+    if(
+      drops[i]*font>matrix.height &&
+      Math.random()>.975
+    ){
+      drops[i]=0;
+    }
+
+    drops[i]+=.7;
+  }
+
+  requestAnimationFrame(drawMatrix);
+}
+
+drawMatrix();
+
+
+/* =====================================================
+   MOUSE GLOW
+===================================================== */
+
+const glow=document.getElementById("glow");
+
+document.addEventListener("mousemove",e=>{
+
+  glow.style.left=e.clientX+"px";
+  glow.style.top=e.clientY+"px";
+
+});
+
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+let audio;
+
+function createAudio(){
+
+  audio=new(
+    window.AudioContext ||
+    window.webkitAudioContext
+  )();
+
+}
+
+function keySound(){
+
+  if(!audio)return;
+
+  const osc=audio.createOscillator();
+  const gain=audio.createGain();
+
+  osc.type="square";
+
+  osc.frequency.value=
+    550+Math.random()*500;
+
+  gain.gain.setValueAtTime(
+    .025,
+    audio.currentTime
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    .001,
+    audio.currentTime+.045
+  );
+
+  osc.connect(gain);
+  gain.connect(audio.destination);
+
+  osc.start();
+  osc.stop(audio.currentTime+.05);
+}
+
+
+function successSound(){
+
+  if(!audio)return;
+
+  const notes=[
+    440,554,659,880
+  ];
+
+  notes.forEach((freq,i)=>{
+
+    const osc=audio.createOscillator();
+    const gain=audio.createGain();
+
+    osc.type="sine";
+
+    osc.frequency.value=freq;
+
+    gain.gain.setValueAtTime(
+      .001,
+      audio.currentTime+i*.12
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .15,
+      audio.currentTime+i*.12+.03
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .001,
+      audio.currentTime+i*.12+.35
+    );
+
+    osc.connect(gain);
+    gain.connect(audio.destination);
+
+    osc.start(audio.currentTime+i*.12);
+    osc.stop(audio.currentTime+i*.12+.4);
+
+  });
+
+}
+
+
+/* =====================================================
+   ENTER
+===================================================== */
+
+function ENTER(){
+
+  createAudio();
+
+  document.getElementById("enterScreen")
+    .style.opacity="0";
+
+  setTimeout(()=>{
+
+    document.getElementById("enterScreen")
+      .style.display="none";
+
+    document.getElementById("main")
+      .style.display="block";
+
+    startTerminal();
+
+  },800);
+
+}
+
+
+/* =====================================================
+   TERMINAL
+===================================================== */
+
+const lines=[
+
+  "> initializing secure connection...",
+  "> bypassing classroom firewall...",
+  "> decrypting friendship.dll...",
+  "> scanning class database...",
+  "> classmates found: TOO MANY 😂",
+  "> measuring chaos levels...",
+  "> CHAOS LEVEL: 1000%",
+  "> WARNING: friendship overload detected",
+  "> generating digital rakhi...",
+  "> installing happiness.exe...",
+  "> establishing connection...",
+  "> CONNECTION ESTABLISHED ❤️",
+  "> launching classified transmission..."
+
+];
+
+let line=0;
+let char=0;
+
+const text=
+  document.getElementById("terminalText");
+
+function startTerminal(){
+
+  type();
+
+}
+
+function type(){
+
+  if(line>=lines.length){
+
+    setTimeout(()=>{
+
+      document
+        .getElementById("terminal")
+        .classList.add("glitch");
+
+      setTimeout(()=>{
+
+        document
+          .getElementById("terminal")
+          .style.display="none";
+
+        document
+          .getElementById("hero")
+          .style.display="block";
+
+        successSound();
+
+      },500);
+
+    },900);
+
+    return;
+  }
+
+  if(char<lines[line].length){
+
+    const c=lines[line][char];
+
+    text.innerHTML+=c;
+
+    if(c!==" "){
+      keySound();
+    }
+
+    char++;
+
+    setTimeout(
+      type,
+      18+Math.random()*35
+    );
+
+  }else{
+
+    text.innerHTML+="<br>";
+
+    line++;
+    char=0;
+
+    setTimeout(
+      type,
+      300+Math.random()*400
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   CELEBRATION
+===================================================== */
+
+function CELEBRATE(){
+
+  successSound();
+
+  document
+    .getElementById("final")
+    .classList.add("show");
+
+  fireworks();
+
+  hearts();
+
+}
+
+
+/* =====================================================
+   CONFETTI / FIREWORKS
+===================================================== */
+
+function fireworks(){
+
+  const colors=[
+    "#00ff9d",
+    "#ff42bd",
+    "#ffffff",
+    "#ffd34e",
+    "#a85cff"
+  ];
+
+  for(let burst=0;burst<8;burst++){
+
+    setTimeout(()=>{
+
+      const x=
+        Math.random()*window.innerWidth;
+
+      const y=
+        Math.random()*
+        window.innerHeight*.55;
+
+      for(let i=0;i<45;i++){
+
+        const s=
+          document.createElement("div");
+
+        s.style.position="fixed";
+        s.style.left=x+"px";
+        s.style.top=y+"px";
+        s.style.width="5px";
+        s.style.height="5px";
+        s.style.borderRadius="50%";
+        s.style.background=
+          colors[
+            Math.floor(
+              Math.random()*colors.length
+            )
+          ];
+        s.style.zIndex="60";
+        s.style.boxShadow=
+          "0 0 10px currentColor";
+
+        document.body.appendChild(s);
+
+        const angle=
+          Math.PI*2*i/45;
+
+        const distance=
+          80+Math.random()*180;
+
+        s.animate(
+          [
+            {
+              transform:
+              "translate(-50%,-50%)",
+              opacity:1
+            },
+            {
+              transform:
+              `translate(
+                ${Math.cos(angle)*distance}px,
+                ${Math.sin(angle)*distance}px
+              )`,
+              opacity:0
+            }
+          ],
+          {
+            duration:
+              900+Math.random()*700,
+            easing:"ease-out"
+          }
+        );
+
+        setTimeout(
+          ()=>s.remove(),
+          1700
+        );
+
+      }
+
+    },burst*400);
+
+  }
+
+}
+
+
+/* =====================================================
+   FLOATING HEARTS
+===================================================== */
+
+function hearts(){
+
+  for(let i=0;i<40;i++){
+
+    setTimeout(()=>{
+
+      const h=
+        document.createElement("div");
+
+      h.innerHTML=
+        Math.random()>.5
+        ?"❤️"
+        :"💖";
+
+      h.style.position="fixed";
+      h.style.left=
+        Math.random()*100+"vw";
+
+      h.style.bottom="-50px";
+      h.style.fontSize=
+        15+Math.random()*30+"px";
+
+      h.style.zIndex="55";
+
+      document.body.appendChild(h);
+
+      h.animate(
+        [
+          {
+            transform:
+            "translateY(0) rotate(0)",
+            opacity:0
+          },
+          {
+            transform:
+            "translateY(-110vh) rotate(360deg)",
+            opacity:1
+          }
+        ],
+        {
+          duration:
+            3000+Math.random()*3000,
+          easing:"ease-out"
+        }
+      );
+
+      setTimeout(
+        ()=>h.remove(),
+        6000
+      );
+
+    },i*100);
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
